@@ -1,0 +1,17 @@
+# SQLite version 3.x
+#   gem install sqlite3
+#
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  username: <%= ENV['MYSQL_USERNAME'] || 'root' %>
+  password: <%= ENV['MYSQL_PASSWORD'] || 'admin' %>
+  host: <%= ENV['MYSQL_HOST'] || 'localhost' %>
+
+development: &development
+  <<: *default
+  database: drinking_game
+
+uat:
+  <<: *development

@@ -1,0 +1,14 @@
+<div class="tweet row">
+  <div class="user col-md-2">
+    <a href="https://twitter.com/<%= tweet.user_id %>"><img src="<%= tweet.user_image %>"/></>
+  </div>
+  <div class="col-md-10">
+    <div class="text">
+      <h2><a href="https://twitter.com/<%= tweet.user_id %>"><%= tweet.user %></a></h2>
+      <p><%= tweet.text %></p>
+    </div>
+    <div class="time">
+      <a href="https://twitter.com/<%= tweet.user_id %>/status/<%= tweet.tweet_id %>"><%= tweet.created_at %></a>
+    </div>
+  </div>
+</div>

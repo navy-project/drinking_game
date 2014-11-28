@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Docker Drinking Game!</title>
+
+    <script src="/js/handlebars-v2.0.0.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+
+  <%= javascript_include_tag "#{ENV["FAYE_HOST_ADDR"]}/faye.js" %>
+  <meta name="faye-server" content="<%= ENV["FAYE_HOST_ADDR"] %>">
+
+  <script id="tweet_tpl" type="text/x-handlebars-template">
+<div class="tweet row">
+  <div class="user col-md-2">
+    <a href="https://twitter.com/{{user_id}}"><img src="{{user_image}}"/></a>
+  </div>
+  <div class="col-md-10">
+    <div class="text">
+      <h2><a href="https://twitter.com/{{user_id}}">{{user}}</a></h2>
+      <p>{{{text}}}</p>
+    </div>
+    <div class="time">
+      <a href="https://twitter.com/{{user_id}}/status/{{tweet_id}}">{{created_at}}</a>
+    </div>
+  </div>
+</div>
+  </script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container" role="main">
+      <div class="jumbotron">
+        <h1><tt>#Docker</tt> Drinking Game</h1>
+        <p>The twitter based Docker drinking game</p>
+        <p><tt>cloud | saas | paas | devops | microservice</tt></p>
+      </div>
+
+<%= yield %>
+
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

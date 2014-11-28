@@ -1,0 +1,36 @@
+apps:
+  game:
+    image: drinking_game
+    links:
+     - mysql
+     - faye
+    modes:
+      web:  bundle exec rails s
+      worker: bundle exec bin/worker
+    proxy_to:
+      web: 3000
+    env_var: RAILS_ENV
+  faye:
+    image: faye
+    proxy_to: 9292
+
+environments:
+  production:
+    pre:
+      game:
+        - bundle exec rake db:migrate
+
+  uat: &UAT
+    dependencies: 
+      mysql:
+        image: mysql:drinkgame
+    pre:
+      #game:
+      #  - bundle exec rake db:create db:migrate
+    docker:
+      game: -e "MYSQL_HOST=mysql" -e "MYSQL_USERNAME=root" -e "MYSQL_PASSWORD=root"
+
+  development:
+    <<: *UAT
+    docker:
+      game: -v /home/vagrant/Development/src/bitbucket.org/navy-project/drinking_game:/var/www/ -e "MYSQL_HOST=mysql" -e "MYSQL_USERNAME=root" -e "MYSQL_PASSWORD=root" -e "CONSUMER_KEY=sUt6YrMG9IufVe9ATvAyyXhxH" -e "CONSUMER_SECRET=5zgKTyFJnnsBsTpb9B1I6e9BMiGaVbxhuR1TaLc9NDVnG35uNB" -e "OAUTH_TOKEN=44626390-gbUcHK3dwURj9nhgBib36mT5Wbt9piMROPVX6pOX2" -e "OAUTH_TOKEN_SECRET=rZlvNdGUY6hjdILGiXPCe2j9xXZcO3PPkZSkMhQqQutAr"
