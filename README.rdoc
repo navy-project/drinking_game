@@ -1,28 +1,106 @@
-== README
+Example Navy Project
+====================
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This project is an example of a set of applications which can be launched as a convoy on a
+navy host.
 
-Things you may want to cover:
+Building the Images
+===================
 
-* Ruby version
+clone the project from github on your docker machine, and build the key images:
 
-* System dependencies
+  git clone https://github.com/navy-project/drinking_game.git
 
-* Configuration
+Build the base image:
 
-* Database creation
+  cd base
+  docker build -t drinking_base .
+  cd ..
 
-* Database initialization
+Build faye, the pubsub server:
 
-* How to run the test suite
+  cd faye
+  docker build -t faye .
+  cd ../
 
-* Services (job queues, cache servers, search engines, etc.)
+Build the application:
 
-* Deployment instructions
+  docker build -t drinking_game .
+  
 
-* ...
+Looking at the manifest
+=======================
+
+The manifest.yml expresses the relationship between the running containers, along with any
+parameters to run them in docker.
+
+  apps:
+    ...
+
+The apps section specifies which applications we are going to serve behind the http proxy.  The
+addresses will be  <appname>-<convoyid>-<mode>.<yourdomain>.  For example, the vagrant bootstrap
+is expected to be on vagrant.navyproject.com for the domain, and runs in "dev" mode.  If we launched
+this set of applications with an id of "foo" then the two addresses would be:
+
+* game-foo-dev.vagrant.navyproject.com
+* faye-foo-dev.vagrant.navyproject.com
+
+The outer proxy layer of the navyhost will proxy requests to that address via https to the underlying
+container port expressed in the manifest.  We can see that for faye, that container is publishing
+9292 to the above address:
+
+   apps:
+     ...
+     faye:
+       image: faye
+       proxy_to: 9292
+
+We can also see that the docker image it runs is 'faye' which we built above.
+
+Links
+
+We can see that links to other applications can be expressed in the 'links' section.  Notice here
+we're expressing two links for 'game'
+
+  apps:
+    game:
+      ..
+      links:
+      - mysql
+      - faye
+
+Here we have 'faye' as seen above, but what's 'mysql'?  That was expressed in the apps section.
+This is because links can be to apps (which will internally route rather than go to the outside
+worlds and route in), but also to internal services or 'dependencies'.  If we look in the
+environments section, we can see where they're expressed:
+
+   environments:
+     ...
+     uat: &UAT
+       dependencies:
+         mysql:
+           image: mysql:drinkgame
+
+     development:
+       <<: *UAT
+       docker:
+         game: -v....
+
+Here we're saying that msyql is satisfied in some environments (one's inheriting our UAT definition).
+This is because our production setup may not link to mysql, but perhaps to a cloud server such as RDS.
 
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+Application modes:
+
+It's possible that there is more than one mode which an image can be run in.  Our game has this.  It has the web application, but also
+a worker mode which monitors a twitter stream:
+
+   apps:
+     game:
+       ..
+       modes:
+         web:  bundle exec rails s
+         worker: bundle exec bin/worker
+      proxy_to:
+        web: 3000
+
