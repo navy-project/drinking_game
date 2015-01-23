@@ -1,4 +1,4 @@
-FROM drinking_base
+FROM navyproject/drinking_base
 
 ADD . /var/www
 
