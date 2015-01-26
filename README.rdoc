@@ -38,12 +38,12 @@ parameters to run them in docker.
     ...
 
 The apps section specifies which applications we are going to serve behind the http proxy.  The
-addresses will be  <appname>-<convoyid>-<mode>.<yourdomain>.  For example, the vagrant bootstrap
+addresses will be <convoyid>-<appname>-<mode>.<yourdomain>.  For example, the vagrant bootstrap
 is expected to be on vagrant.navyproject.com for the domain, and runs in "dev" mode.  If we launched
 this set of applications with an id of "foo" then the two addresses would be:
 
-* game-foo-dev.vagrant.navyproject.com
-* faye-foo-dev.vagrant.navyproject.com
+* foo-game-dev.vagrant.navyproject.com
+* foo-faye-dev.vagrant.navyproject.com
 
 The outer proxy layer of the navyhost will proxy requests to that address via https to the underlying
 container port expressed in the manifest.  We can see that for faye, that container is publishing
